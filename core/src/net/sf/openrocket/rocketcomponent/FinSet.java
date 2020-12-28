@@ -33,8 +33,8 @@ public abstract class FinSet extends ExternalComponent implements AxialPositiona
 	/**
 	 * Maximum allowed cant of fins.
 	 */
-	public static final double MAX_CANT_RADIANS = (15.0 * Math.PI / 180);
-	
+	public static final double MAX_CANT_RADIANS = (90 * Math.PI / 180);
+
 	public enum CrossSection {
 		//// Square
 		SQUARE(trans.get("FinSet.CrossSection.SQUARE"), 1.00),
@@ -217,7 +217,13 @@ public abstract class FinSet extends ExternalComponent implements AxialPositiona
 			if (MathUtil.equals(this.cantRadians, 0)) {
 				cantRotation = Transformation.IDENTITY;
 			} else {
-				cantRotation = Transformation.rotate_y(cantRadians);
+				Coordinate[] finPoints = getFinPoints();
+				Coordinate finCenterAxis = new Coordinate(
+						getFinFront().x - finPoints[finPoints.length - 1].x,
+						0,
+						getFinFront().z - finPoints[finPoints.length - 1].z
+				);
+				cantRotation = Transformation.rotate_about_vertical_axis(cantRadians, finCenterAxis);
 			}
 		}
 		return cantRotation;
